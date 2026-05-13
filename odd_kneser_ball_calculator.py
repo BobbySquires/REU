@@ -109,9 +109,7 @@ def print_distance_distribution(k: int, r: int) -> None:
     for l in range(min(r, k) + 1):
         layer = boundary_layer_size(k, l)
         running += layer
-        if l == 0:
-            s_label = "-"
-        elif l % 2 == 1:
+        if l % 2 == 1:
             s_label = str((l - 1) // 2)
         else:
             s_label = str(k - l // 2)

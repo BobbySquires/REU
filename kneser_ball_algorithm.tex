@@ -42,4 +42,71 @@ we can sum the size of the layers to get
 
 \end{enumerate}
 
+\newpage
+
+Now we will give an explicit function to find the size of the boundary of an $l$-ball in $K(2k+1,k)$. We drop the vertex from here on due to vertex transitivity. We will use the formula for the number of $k$-sets of $[2k+1]$ that intersect another $k$-set in $s_r$ places, which is the boundary of an $r$-ball
+\[
+\binom{k}{s_r} \binom{k+1}{k-s_r} = |\partial B(r)|,
+\]
+as well as the inverse of the distance formula to solve for $s$ in terms of $r$.
+\[
+s(r) =
+\begin{cases}
+    k - \dfrac{r}{2}, & r \text{ even} \\[6pt]
+    \dfrac{r-1}{2}, & r \text{ odd}
+\end{cases}
+\]
+Plugging the latter into the former gives
+\[
+|\partial B(l)| =
+\begin{cases}
+    \dbinom{k}{k - l/2} \dbinom{k+1}{k - (k - l/2)} & l \text{ even} \\[6pt]
+    \dbinom{k}{(l-1)/2} \dbinom{k+1}{k - (l-1)/2} & l \text{ odd}
+\end{cases}
+=
+\begin{cases}
+    \dbinom{k}{k - l/2} \dbinom{k+1}{l/2} & l \text{ even} \\[6pt]
+    \dbinom{k}{(l-1)/2} \dbinom{k+1}{k - (l-1)/2} & l \text{ odd}
+\end{cases}.
+\]
+Using symmetry of binomial coefficients\footnote{$\dbinom{k}{j} = \dbinom{k}{k-j}$} in the even case gives
+\[
+|\partial B(l)| =
+\begin{cases}
+    \dbinom{k}{l/2} \dbinom{k+1}{l/2} & l \text{ even} \\[6pt]
+    \dbinom{k}{(l-1)/2} \dbinom{k+1}{k - (l-1)/2} & l \text{ odd}
+\end{cases}.
+\]
+We can apply symmetry a second time in the odd case
+\[
+\binom{k+1}{k - (l-1)/2} =
+\binom{k+1}{(k+1) - ( k - (l-1)/2)} =
+\binom{k+1}{k+1 - k + (l-1)/2}
+\]
+\[
+= \binom{k+1}{1 + (l-1)/2} = \binom{k+1}{(l+1)/2}.
+\]
+Now we can write our formula
+\[
+|\partial B(l)| =
+\begin{cases}
+    \dbinom{k}{l/2} \dbinom{k+1}{l/2} & l \text{ even} \\[6pt]
+    \dbinom{k}{(l-1)/2} \dbinom{k+1}{(l+1)/2} & l \text{ odd}
+\end{cases}
+\]
+or we can simplify the even and odd cases into one using that
+\[
+\lceil l/2 \rceil = \lfloor l/2 \rfloor = l/2 \quad \text{when $l$ is even},
+\]
+\[
+\lceil l/2 \rceil = (l+1)/2, \quad \lfloor l/2 \rfloor = (l-1)/2 \quad \text{when $l$ is odd},
+\]
+therefore we can rewrite as
+\[
+|\partial B(l)| = \binom{k}{\lfloor l/2 \rfloor} \binom{k+1}{\lceil l/2 \rceil},
+\]
+and the full ball size is therefore
+\[
+|B(r)| = \sum_{l=0}^{r} \binom{k}{\lfloor l/2 \rfloor} \binom{k+1}{\lceil l/2 \rceil}.
+\]
 \end{document}
