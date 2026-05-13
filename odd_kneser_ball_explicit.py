@@ -93,7 +93,36 @@ def print_distance_distribution(k: int, r: int) -> None:
     print(f"\n  |B(r={r})| = {ball_size(k, r)}")
 
 
+def print_ball_sequence(k: int, r: int) -> None:
+    """Print the sequence of ball sizes |B(0)|, |B(1)|, ..., |B(r)| as a list."""
+    r_max = min(r, k)
+    sequence = [ball_size(k, l) for l in range(r_max + 1)]
+    print(f"\nBall size sequence for K({2*k+1}, {k}), r = 0..{r_max}:")
+    print(sequence)
+
+
+def flat_ball_sequence(k_max: int = 10) -> list[int]:
+    """
+    For each k from 1 to k_max, compute |B(0)|, |B(1)|, ..., |B(k)| in
+    K(2k+1, k), then concatenate all sequences into a single flat list.
+
+    Returns
+    -------
+    list[int] -- [|B(0)|, |B(1)| (k=1), |B(0)|, ..., |B(2)| (k=2), ...]
+    """
+    return [sum(boundary_layer_size(k, l) for l in range(r + 1))
+            for k in range(1, k_max + 1) for r in range(k + 1)]
+
+
 if __name__ == "__main__":
     k = int(input("Enter k (graph parameter for K(2k+1, k)): "))
     r = int(input("Enter r (ball radius): "))
-    print_distance_distribution(k, r)
+    print("Output options:")
+    print("  1 - Full table")
+    print("  2 - Ball size sequence only")
+    choice = input("Choose (1 or 2): ").strip()
+
+    if choice == "2":
+        print_ball_sequence(k, r)
+    else:
+        print_distance_distribution(k, r)
