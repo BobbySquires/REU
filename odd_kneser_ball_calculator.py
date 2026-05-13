@@ -96,43 +96,31 @@ def ball_size(k: int, r: int) -> int | None:
     return sum(boundary_layer_size(k, l) for l in range(r + 1))
 
 
-def print_distance_distribution(k: int) -> None:
-    """Print the full distance distribution and cumulative ball sizes for K(2k+1, k)."""
+def print_distance_distribution(k: int, r: int) -> None:
+    """Print the distance distribution up to radius r and cumulative ball sizes for K(2k+1, k)."""
     n = 2 * k + 1
     total_vertices = comb(n, k)
-    diameter = k
 
-    print(f"K({n}, {k})  |V| = C({n},{k}) = {total_vertices}  diameter = {diameter}")
+    print(f"\nK({n}, {k})  |V| = C({n},{k}) = {total_vertices}  diameter = {k}")
     print(f"  {'r':>4}  {'|dB(v,r)|':>12}  {'|B(v,r)|':>12}  {'s':>4}")
     print(f"  {'-'*4}  {'-'*12}  {'-'*12}  {'-'*4}")
 
     running = 0
-    for r in range(diameter + 1):
-        layer = boundary_layer_size(k, r)
+    for l in range(min(r, k) + 1):
+        layer = boundary_layer_size(k, l)
         running += layer
-        if r == 0:
+        if l == 0:
             s_label = "-"
-        elif r % 2 == 1:
-            s_label = str((r - 1) // 2)
+        elif l % 2 == 1:
+            s_label = str((l - 1) // 2)
         else:
-            s_label = str(k - r // 2)
-        print(f"  {r:>4}  {layer:>12}  {running:>12}  {s_label:>4}")
+            s_label = str(k - l // 2)
+        print(f"  {l:>4}  {layer:>12}  {running:>12}  {s_label:>4}")
 
-    assert running == total_vertices, (
-        f"Layer counts sum to {running}, expected C({n},{k}) = {total_vertices}"
-    )
-    print()
+    print(f"\n  |B(v, {r})| = {ball_size(k, r)}")
 
 
 if __name__ == "__main__":
-    import sys
-
-    if len(sys.argv) == 3:
-        # Usage: python kneser_ball_sizes.py <k> <r>
-        k_arg = int(sys.argv[1])
-        r_arg = int(sys.argv[2])
-        result = ball_size(k_arg, r_arg)
-        print(f"|B(v, {r_arg})| in K({2*k_arg+1}, {k_arg}) = {result}")
-    else:
-        for k in range(2, 8):
-            print_distance_distribution(k)
+    k = int(input("Enter k (graph parameter for K(2k+1, k)): "))
+    r = int(input("Enter r (ball radius): "))
+    print_distance_distribution(k, r)
