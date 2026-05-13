@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb}
+
+\begin{document}
+
+The following algorithm computes $|B(v,r)|$ in any odd Kneser graph $K(2k+1,k)$ graph for fixed $0 \leq r \leq k$ and $v$. Note that since the Kneser graphs are vertex transitive, the choice of $v$ is irrelevant, that is all $r$-balls in $K(2k+1,k)$ have the same number of elements, regardless of where they are centered.
+
+\begin{enumerate}
+\item \textit{Find the size of the overlap $s$.} We apply Lemma 4 to describe the $k$-sets of $[2k+1]$ that are distance $r$ from $v$. If $r$ is odd, then for any node $x$ that is distance $r$ from $v$ we have
+\[
+r = d(v,x) = 2s + 1 \quad \exists s \in \mathbb{Z}_+
+\]
+\[
+\implies \frac{r-1}{2} = s.
+\]
+If $r$ is even then for any node $x$ that is distance $r$ from $v$ we have
+\[
+r  = d(v,x) = 2(k-s) \quad \exists s \in \mathbb{Z}_+
+\]
+\[
+\implies k - \frac{r}{2} = s.
+\]
+
+\item \textit{Count $k$-sets of $[2k+1]$.} Next we find the number of $k$-sets of $[2k+1]$ that overlap the set corresponding to $v$ in exactly $s$ places. This can be described combinatorial in two steps:
+\begin{itemize}
+\item Count the number of ways to choose $s$ elements in the $k$-set $v$ to be the overlapping elements. This is $\binom{k}{s}$.
+\item Count the number of ways to choose $k-s$ elements of the $k$-set $x$ to not overlap the original set $v$. This is $\binom{2k+1-k}{k-s}$
+\end{itemize}
+Multiplying gives the formula
+\[
+\binom{k}{s} \binom{k+1}{k-s} = |\partial B(v,r)|.
+\]
+
+\item \textit{Iterate.} Repeat steps $1$ and $2$ for $r' = r-1$ until termination at $r = 0$. Then because
+\[
+B(v,r) = \bigsqcup_{l=0}^r \partial B(v,l)
+\]
+we can sum the size of the layers to get
+\[
+|B(v,r)| = \sum_{l=0}^r \partial B(v,l).
+\]
+
+\end{enumerate}
+
+\end{document}
