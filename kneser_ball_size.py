@@ -1,5 +1,6 @@
 """
-Computes |B(r)| in any odd Kneser graph K(2k+1, k) using the explicit formula.
+Computes a table of values for |B(r)| in any odd Kneser graph K(2k+1, k) up to maximal ball size k,
+which is the diameter of the graph, using the explicit formula for each layer.
 
 Vertices are k-subsets of [2k+1]. Two vertices are adjacent iff disjoint.
 Because K(2k+1, k) is vertex-transitive, all r-balls have the same size
@@ -75,54 +76,33 @@ def ball_size(k: int, r: int) -> int | None:
     return sum(boundary_layer_size(k, l) for l in range(r + 1))
 
 
-def print_distance_distribution(k: int, r: int) -> None:
-    """Print the distance distribution up to radius r for K(2k+1, k)."""
+def print_distance_distribution(k: int) -> None:
+    """Print the full distance distribution for K(2k+1, k)."""
     n = 2 * k + 1
     total_vertices = comb(n, k)
 
     print(f"\nK({n}, {k})  |V| = C({n},{k}) = {total_vertices}  diameter = {k}")
-    print(f"  {'l':>4}  {'floor(l/2)':>10}  {'ceil(l/2)':>9}  {'|dB(l)|':>10}  {'|B(l)|':>10}")
-    print(f"  {'-'*4}  {'-'*10}  {'-'*9}  {'-'*10}  {'-'*10}")
+    print()
+    print("  Columns:")
+    print("    r       : distance (radius) from the center vertex")
+    print("    s       : overlap |v ∩ x| for vertices x at distance r from v")
+    print("    σ(r)    : number of vertices at distance exactly r  [= C(k, floor(r/2)) * C(k+1, ceil(r/2))]")
+    print("    β(r)    : cumulative number of vertices within distance r  [= sum of σ(0)..σ(r)]")
+    print()
+    print(f"  {'r':>4}  {'s':>4}  {'σ(r)':>12}  {'β(r)':>12}")
+    print(f"  {'-'*4}  {'-'*4}  {'-'*12}  {'-'*12}")
 
     running = 0
-    for l in range(min(r, k) + 1):
-        layer = boundary_layer_size(k, l)
+    for r in range(k + 1):
+        layer = boundary_layer_size(k, r)
         running += layer
-        print(f"  {l:>4}  {l//2:>10}  {(l+1)//2:>9}  {layer:>10}  {running:>10}")
+        s = (r - 1) // 2 if r % 2 == 1 else k - r // 2
+        print(f"  {r:>4}  {s:>4}  {layer:>12}  {running:>12}")
 
-    print(f"\n  |B(r={r})| = {ball_size(k, r)}")
+    print(f"\n  β({k}) = {ball_size(k, k)}")
 
-
-def print_ball_sequence(k: int, r: int) -> None:
-    """Print the sequence of ball sizes |B(0)|, |B(1)|, ..., |B(r)| as a list."""
-    r_max = min(r, k)
-    sequence = [ball_size(k, l) for l in range(r_max + 1)]
-    print(f"\nBall size sequence for K({2*k+1}, {k}), r = 0..{r_max}:")
-    print(sequence)
-
-
-def flat_ball_sequence(k_max: int = 10) -> list[int]:
-    """
-    For each k from 1 to k_max, compute |B(0)|, |B(1)|, ..., |B(k)| in
-    K(2k+1, k), then concatenate all sequences into a single flat list.
-
-    Returns
-    -------
-    list[int] -- [|B(0)|, |B(1)| (k=1), |B(0)|, ..., |B(2)| (k=2), ...]
-    """
-    return [sum(boundary_layer_size(k, l) for l in range(r + 1))
-            for k in range(1, k_max + 1) for r in range(k + 1)]
 
 
 if __name__ == "__main__":
     k = int(input("Enter k (graph parameter for K(2k+1, k)): "))
-    r = int(input("Enter r (ball radius): "))
-    print("Output options:")
-    print("  1 - Full table")
-    print("  2 - Ball size sequence only")
-    choice = input("Choose (1 or 2): ").strip()
-
-    if choice == "2":
-        print_ball_sequence(k, r)
-    else:
-        print_distance_distribution(k, r)
+    print_distance_distribution(k)
