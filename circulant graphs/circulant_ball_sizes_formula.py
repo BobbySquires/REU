@@ -1,0 +1,72 @@
+import math
+
+def sieve(limit):
+    is_prime = [True] * (limit + 1)
+    is_prime[0] = is_prime[1] = False
+    for i in range(2, int(limit**0.5) + 1):
+        if is_prime[i]:
+            for j in range(i * i, limit + 1, i):
+                is_prime[j] = False
+    return [i for i in range(2, limit + 1) if is_prime[i]]
+
+def compute_shell(p, n, m, r):
+    if r == 0:
+        return 1
+    pnm = p ** (n - m)
+    A = math.ceil(min(pnm / 2, (p ** m) / 2))
+    B = math.floor(max(pnm / 2, (p ** m) / 2))
+    on_boundary = int((r+1 <= A) or (r-1 >= B))
+    s = (2 * pnm) - (2 * ((2 * max(0, A - (r+1), (r-1) - B)) + on_boundary))
+    return s
+
+
+def compute_ball(p, n, m, r):
+    ball = 0
+    for i in range(0, r + 1):
+        if compute_shell(p, n, m, r) < 0 :
+            return -1
+        ball += compute_shell(p, n, m, i)
+    return ball
+
+
+def make_formula_dict(n, m, num_primes=10):
+    primes = sieve(99)[:num_primes]
+    beta_dict = {}
+    for p in primes:
+        size = p ** n
+        beta = []
+        running = 0
+        for r in range(size + 1):
+            s = compute_shell(p, n, m, r)
+            if s < 0:
+                break
+            running += s
+            beta.append(running)
+        beta_dict[p] = beta
+    return beta_dict
+
+def print_beta_dict(beta_dict, n, m):
+    primes = sorted(beta_dict.keys())
+    max_diam = max(len(beta) - 1 for beta in beta_dict.values())
+
+    header_cols = ["p"] + [f"beta({r})" for r in range(max_diam + 1)]
+    col_widths = [6] + [max(8, len(f"beta({r})") + 1) for r in range(max_diam + 1)]
+
+    def fmt_row(vals):
+        return "".join(str(v).ljust(w) for v, w in zip(vals, col_widths))
+
+    print(f"C_{{p^{n}}}(1, p^{m}) [formula]")
+    print("=" * 80)
+    print("SUMMARY TABLE")
+    print("=" * 80)
+    print(fmt_row(header_cols))
+    print("-" * sum(col_widths))
+    for p in primes:
+        beta = beta_dict[p]
+        size = p ** n
+        print(fmt_row([p] + beta + [size] * (max_diam - (len(beta) - 1))))
+
+if __name__ == "__main__":
+    n, m = 4, 3
+    formula_dict = make_formula_dict(n, m)
+    print_beta_dict(formula_dict, n, m)
